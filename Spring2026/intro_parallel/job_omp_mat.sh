@@ -1,10 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=omp_bench
-#SBATCH --output=omp_results.out
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=4G
+#SBATCH --cpus-per-task=64
+#SBATCH --mem=400G
 #SBATCH --time=00:10:00
+#SBATCH --partition general-cpu
+#SBATCH --account compute2-ris   #please change this to your account
 
 EXE_NAME="./omp_mat"
 
@@ -18,6 +19,11 @@ module load ris shared
 module load gcc/13.1.0
 
 # 3. Compilation (CRITICAL: use -fopenmp instead of -lpthread)
+
+# Optimization for Intel CPUs
+export OMP_PROC_BIND=close
+export OMP_PLACES=cores
+
 gcc -O3 -fopenmp omp_mat.c -o omp_mat
 
 # 4. Execution
