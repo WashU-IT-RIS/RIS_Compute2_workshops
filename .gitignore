@@ -1,5 +1,8 @@
 # Prerequisites
 *.d
+**/omp_hello
+**/parallel_add
+**/omp_mat
 
 # Object files
 *.o
