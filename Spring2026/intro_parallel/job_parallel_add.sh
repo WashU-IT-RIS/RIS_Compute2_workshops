@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=pthread_test
-#SBATCH --output=res.out
 #SBATCH --nodes=1               # Pthreads only work on ONE node
 #SBATCH --cpus-per-task=8       # Number of cores to use
 #SBATCH --time=00:05:00

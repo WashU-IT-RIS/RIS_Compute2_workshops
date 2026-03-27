@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=pthread_bench
-#SBATCH --output=bench_results.out
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=4G
@@ -17,6 +16,7 @@ if [ -f "$EXE_NAME" ]; then
 fi
 
 # 2. Setup
+module purge
 module load ris shared 
 module load gcc/13.1.0
 
