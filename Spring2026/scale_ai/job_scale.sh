@@ -33,7 +33,7 @@ module load apptainer
 
 export imagefile=/storage1/fs1/ayush/Active/containers/pytorch_25_5.sif
 export BASE="apptainer  exec --nv --writable-tmpfs --bind=/scratch,/storage1/fs1/ayush/Active${TMPFS} ${imagefile} "
-export CMD="python train.py"
+export CMD="python train_scale.py"
 
 srun  --unbuffered --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE $CMD
 
