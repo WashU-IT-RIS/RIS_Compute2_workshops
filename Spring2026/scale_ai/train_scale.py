@@ -59,7 +59,10 @@ def train_func():
     # torch.cuda.set_device(local_rank)
     if rank == 0: print(f"Group initialized? {dist.is_initialized()}", flush=True)
 
-
+    train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=args.world_size, rank=rank)
+    test_sampler = torch.utils.data.distributed.DistributedSampler(test_dataset, num_replicas=args.world_size, rank=rank)
+    val_sampler = torch.utils.data.distributed.DistributedSampler(val_dataset, num_replicas=args.world_size, rank=rank)
+    
     # Create data loaders
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=64, shuffle=True, num_workers=4
@@ -81,6 +84,7 @@ def train_func():
     # Define the loss function and optimizer
     if rank == 0: print(f"Initializing distributed model", flush=True)
     # put model , train and test and val on the device
+    model.to(device)
     model = DDP(model, device_ids=[local_rank])
 
     criterion = torch.nn.CrossEntropyLoss()
