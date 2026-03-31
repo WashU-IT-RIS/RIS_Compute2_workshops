@@ -1,12 +1,12 @@
 import torch
 import torchvision
 # import torch.profiler
-
+from torch.optim.lr_scheduler import ExponentialLR
 
 
 # Load the Tiny ImageNet dataset
 train_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/train',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/train',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -14,7 +14,7 @@ train_dataset = torchvision.datasets.ImageFolder(
 )
 
 val_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/val',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/val',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -22,28 +22,28 @@ val_dataset = torchvision.datasets.ImageFolder(
 )
 
 test_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/test',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/test',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ])
 )
 
-train_func():
+def train_func():
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print ("device: ", device)
     # Create data loaders
     train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=64, shuffle=True, num_workers=4
+        train_dataset, batch_size=640, shuffle=True, num_workers=4
     )
 
     val_loader = torch.utils.data.DataLoader(
-        val_dataset, batch_size=64, shuffle=False, num_workers=4
+        val_dataset, batch_size=6406, shuffle=False, num_workers=4
     )
 
     test_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=64, shuffle=False, num_workers=4
+        test_dataset, batch_size=640, shuffle=False, num_workers=4
     )
 
     # Create a model
@@ -56,7 +56,7 @@ train_func():
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     scheduler = ExponentialLR(optimizer=optimizer, gamma=0.95)
-
+    model = model.to(device)
     # Profile the GPU usage
     for epoch in range(2):
         for i, (images, labels) in enumerate(train_loader):
@@ -107,13 +107,12 @@ train_func():
     test_accuracy = correct / total
     print(f'Test accuracy: {test_accuracy}')
 
-    dist.destroy_process_group()
     return
 
 
 
 def main():
-    train_func(args)
+    train_func()
 
 
 if __name__ == '__main__':

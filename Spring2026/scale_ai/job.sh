@@ -20,7 +20,7 @@ echo "SLURMTMPDIR=$SLURMTMPDIR"
 module load ris shared
 module load apptainer
 
-export imagefile=/storage1/fs1/ayush/Active/containers/pytorch_25_5.sif
+export imagefile=/storage1/fs1/ayush/Active/containers/pytorch_25_05.sif
 export BASE="apptainer  exec --nv --writable-tmpfs --bind=/scratch,/storage1/fs1/ayush/Active${TMPFS} ${imagefile} "
 export CMD="python train.py"
 
