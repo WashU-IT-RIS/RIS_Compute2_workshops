@@ -1,0 +1,155 @@
+import torch
+import torchvision
+# import torch.profiler
+
+
+
+# Load the Tiny ImageNet dataset
+train_dataset = torchvision.datasets.ImageFolder(
+    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/train',
+    transform=torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+    ])
+)
+
+val_dataset = torchvision.datasets.ImageFolder(
+    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/val',
+    transform=torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+    ])
+)
+
+test_dataset = torchvision.datasets.ImageFolder(
+    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/test',
+    transform=torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+    ])
+)
+
+train_func():
+    port = args.port
+    os.environ['MASTER_PORT'] = str(port)
+    torch.manual_seed(torch.initial_seed())
+    world_size =  int(os.environ["WORLD_SIZE"])
+    rank = int(os.environ["SLURM_PROCID"])
+    gpus_per_node  = torch.cuda.device_count()
+    if gpus_per_node >0:
+        local_rank = rank - gpus_per_node * (rank // gpus_per_node)
+    else:
+        local_rank = 0
+    # use the correct device 
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda", local_rank)
+        torch.cuda.set_device(device)
+    else:
+        device = torch.device("cpu", local_rank)
+
+    torch.cuda.manual_seed(1111)
+
+    # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print ("device: ", device)
+    distback = 'nccl'
+    dist.init_process_group(distback, rank=rank, world_size=world_size)
+    print(f"Hello from local_rank: {local_rank} and global rank {dist.get_rank()} of world with size: {dist.get_world_size()} on {gethostname()} where there are {gpus_per_node} allocated GPUs per node.", flush=True)
+    # torch.cuda.set_device(local_rank)
+    if rank == 0: print(f"Group initialized? {dist.is_initialized()}", flush=True)
+
+
+    # Create data loaders
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset, batch_size=64, shuffle=True, num_workers=4
+    )
+
+    val_loader = torch.utils.data.DataLoader(
+        val_dataset, batch_size=64, shuffle=False, num_workers=4
+    )
+
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset, batch_size=64, shuffle=False, num_workers=4
+    )
+
+    # Create a model
+    model = torchvision.models.resnet50()
+    # model = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.IMAGENET1K_V1)
+    torchvision.models
+
+    # Define the loss function and optimizer
+    if rank == 0: print(f"Initializing distributed model", flush=True)
+    # put model , train and test and val on the device
+    model = DDP(model, device_ids=[local_rank])
+
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    scheduler = ExponentialLR(optimizer=optimizer, gamma=0.95)
+    map_location = {'cuda:%d' % 0: 'cuda:%d' % rank}
+    # if en_wan > 0:
+    #     wandb.watch(model, log_freq=100)
+    dist.barrier()
+    if rank == 0: print(f"Starting Training", flush=True)
+
+    # Profile the GPU usage
+    for epoch in range(2):
+        for i, (images, labels) in enumerate(train_loader):
+            images, labels = images.to(device), labels.to(device)
+
+            # Forward pass
+            outputs = model(images)
+
+            # Calculate the loss
+            loss = criterion(outputs, labels)
+
+            # Backpropagate the loss
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            # Print the loss
+            if i % 100 == 0:
+                print(f'Epoch {epoch + 1}, batch {i + 1}/{len(train_loader)}, loss: {loss.item()}')
+            # Evaluate the model on the validation set
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for images, labels in val_loader:
+                images, labels = images.to(device), labels.to(device)
+                
+                outputs = model(images)
+                _, predicted = outputs.max(1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
+        val_accuracy = correct / total
+        print(f'Val accuracy: {val_accuracy}')
+
+
+    # Test the model on the test set
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images, labels = images.to(device), labels.to(device)
+
+            outputs = model(images)
+            _, predicted = outputs.max(1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    test_accuracy = correct / total
+    print(f'Test accuracy: {test_accuracy}')
+
+    dist.destroy_process_group()
+    return
+
+
+
+def main():
+    train_func(args)
+
+
+if __name__ == '__main__':
+    main()
+    exit()
