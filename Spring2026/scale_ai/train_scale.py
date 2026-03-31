@@ -9,7 +9,7 @@ import nvtx
 
 # Load the Tiny ImageNet dataset
 train_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/train',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/train',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -17,7 +17,7 @@ train_dataset = torchvision.datasets.ImageFolder(
 )
 
 val_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/val',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/val',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -25,14 +25,14 @@ val_dataset = torchvision.datasets.ImageFolder(
 )
 
 test_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/test',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/test',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ])
 )
 
-train_func():
+def train_func():
     port = args.port
     os.environ['MASTER_PORT'] = str(port)
     torch.manual_seed(torch.initial_seed())
@@ -53,7 +53,6 @@ train_func():
 
     torch.cuda.manual_seed(1111)
 
-    # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print ("device: ", device)
     distback = 'nccl'
     dist.init_process_group(distback, rank=rank, world_size=world_size)
