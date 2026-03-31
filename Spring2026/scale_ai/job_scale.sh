@@ -36,17 +36,3 @@ export BASE="apptainer  exec --nv --writable-tmpfs --bind=/scratch,/storage1/fs1
 export CMD="python train_scale.py"
 
 srun  --unbuffered --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE $CMD
-
-if [ "$enable_profile" = "true" ];then
-#  module load CUDA/11.7.0
-  echo "cuda home: ${CUDA_HOME}"
-  srun --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE \
-  nsys profile --trace='cuda','cublas','cudnn','osrt','nvtx','cudnn','cusparse','mpi' --stats='true' --sample=none --export=sqlite -f true -o profile.${SLURM_PROCID} ${cmd}
-else
-  for _experiment_index in $(seq 1 "${NEXP}"); do
-    (
-  	echo "Beginning trial ${_experiment_index} of ${NEXP}"
-  	srun  --unbuffered --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE $CMD
-    )
-  done
-fi
