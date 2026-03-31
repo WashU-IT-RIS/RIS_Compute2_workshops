@@ -52,16 +52,10 @@ train_func():
     torchvision.models
 
     # Define the loss function and optimizer
-    if rank == 0: print(f"Initializing distributed model", flush=True)
     # put model , train and test and val on the device
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     scheduler = ExponentialLR(optimizer=optimizer, gamma=0.95)
-    map_location = {'cuda:%d' % 0: 'cuda:%d' % rank}
-    # if en_wan > 0:
-    #     wandb.watch(model, log_freq=100)
-    dist.barrier()
-    if rank == 0: print(f"Starting Training", flush=True)
 
     # Profile the GPU usage
     for epoch in range(2):
