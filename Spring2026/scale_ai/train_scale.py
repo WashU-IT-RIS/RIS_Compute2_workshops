@@ -6,6 +6,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 import nvtx
 import os
+from socket import gethostname
 
 
 # Load the Tiny ImageNet dataset
