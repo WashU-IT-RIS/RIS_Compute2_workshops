@@ -5,11 +5,8 @@ This repository provides scripts, utilities, and sample code for profiling GPU w
 ## Repository Structure
 
 - `src/` — Source code and scripts for profiling and benchmarking.
-  - `*.py` — Python scripts for running and profiling ML workloads (e.g., `train.py`, `rapids_tsne.py`).
-  - `*.sh` — SLURM batch scripts and shell utilities for submitting jobs to Ibex (e.g., `rapids_tsne.sh`, `check_for_the_nsys.sh`).
-  - `cuda_matmul/` — Example CUDA code and Makefile for matrix multiplication profiling.
-- `data/` — Input datasets and logs for profiling runs.
-  - Contains sample of output logs from profiling tools.
+  - `*.py` — Python scripts for running and profiling ML workloads (e.g., `train.py`, `train_scale.py`).
+  - `*.sh` — SLURM batch scripts and shell utilities for submitting jobs to Compute2 
 - `test/` — (Reserved for test scripts or test data.)
 - `LICENSE` — License information for the repository.
 
