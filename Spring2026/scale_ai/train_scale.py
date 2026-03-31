@@ -5,6 +5,7 @@ import torch.multiprocessing as mp
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 import nvtx
+import os
 
 
 # Load the Tiny ImageNet dataset
