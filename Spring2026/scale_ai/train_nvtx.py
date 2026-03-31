@@ -5,6 +5,9 @@ import torch.multiprocessing as mp
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 import nvtx
+import os
+from socket import gethostname
+from torch.optim.lr_scheduler import ExponentialLR
 
 
 # Load the Tiny ImageNet dataset
@@ -83,6 +86,7 @@ train_func():
     # Define the loss function and optimizer
     if rank == 0: print(f"Initializing distributed model", flush=True)
     # put model , train and test and val on the device
+    model.to(device)
     model = DDP(model, device_ids=[local_rank])
 
     criterion = torch.nn.CrossEntropyLoss()
