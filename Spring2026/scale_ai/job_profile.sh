@@ -42,4 +42,4 @@ export CMD="python train_nvtx.py"
 
 echo "cuda home: ${CUDA_HOME}"
 srun --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE \
-nsys profile --delay 120 --duration 60  --cuda-memory-usage=true --trace='cuda,cublas,cudnn,cusolver,osrt,nvtx,cusparse' --stats='true' --sample=none --export=sqlite -f true -o profile.${SLURM_PROCID} ${cmd}
+nsys profile --delay 120 --duration 60  --cuda-memory-usage=true --trace='cuda,cublas,cudnn,cusolver,osrt,nvtx,cusparse' --stats='true' --sample=none --export=sqlite -f true -o profile.${SLURM_PROCID} python train_nvtx.py
