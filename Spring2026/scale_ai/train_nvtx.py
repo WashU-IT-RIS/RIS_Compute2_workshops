@@ -35,7 +35,7 @@ test_dataset = torchvision.datasets.ImageFolder(
     ])
 )
 
-train_func():
+def train_func():
     port = args.port
     os.environ['MASTER_PORT'] = str(port)
     torch.manual_seed(torch.initial_seed())
