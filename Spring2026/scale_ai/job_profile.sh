@@ -11,7 +11,7 @@
 #SBATCH --reservation workshop2026
 
 
-export MASTER_PORT=$port
+export MASTER_PORT=9898
 echo "master port: $MASTER_PORT"
 master_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 export MASTER_ADDR=$master_addr
