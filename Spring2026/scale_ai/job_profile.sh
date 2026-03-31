@@ -24,7 +24,7 @@ echo "slurm job: $SLURM_JOBID"
 echo "SLURM_JOBID="$SLURM_JOBID
 echo "SLURM_JOB_NODELIST=$SLURM_JOB_NODELIST"
 echo "SLURM_NNODES=$SLURM_NNODES"
-echo "SLURMTMPDIR=$SLURMTMPDIR"
+echo "SLURMTMPDIR=$TMPFS"
 
 export NCCL_NSOCKS_PERTHREAD=4
 export NCCL_SOCKET_NTHREADS=2
@@ -36,8 +36,8 @@ export NCCL_DEBUG=INFO
 module load ris shared
 module load apptainer
 
-export imagefile=/storage1/fs1/ayush/Active/containers/pytorch_25_5.sif
-export BASE="apptainer  exec --nv --writable-tmpfs --bind=/scratch,/storage1/fs1/ayush/Active${TMPFS} ${imagefile} "
+export imagefile=/storage1/fs1/ayush/Active/containers/pytorch_25_05.sif
+export BASE="apptainer  exec --nv --writable-tmpfs --bind=/storage1/fs1/ayush/Active,${TMPFS} ${imagefile} "
 export CMD="python train_nvtx.py"
 
 echo "cuda home: ${CUDA_HOME}"
