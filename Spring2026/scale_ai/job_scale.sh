@@ -40,7 +40,8 @@ srun  --unbuffered --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE $CMD
 if [ "$enable_profile" = "true" ];then
 #  module load CUDA/11.7.0
   echo "cuda home: ${CUDA_HOME}"
-  srun --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE dlprof --output_path=${SLURM_JOBID} --nsys_base_name=nsys_${SLURM_PROCID} --profile_name=dlpro_${SLURM_PROCID} --mode=pytorch --nsys_opts="-t osrt,cuda,nvtx,cudnn,cublas,cusparse,mpi, --cuda-memory-usage=true" -f true --reports=all --delay 60 --duration 120 ${CMD}
+  srun --wait=120 --kill-on-bad-exit=0 --cpu-bind=none $BASE \
+  nsys profile --trace='cuda','cublas','cudnn','osrt','nvtx','cudnn','cusparse','mpi' --stats='true' --sample=none --export=sqlite -f true -o profile.${SLURM_PROCID} ${cmd}
 else
   for _experiment_index in $(seq 1 "${NEXP}"); do
     (
