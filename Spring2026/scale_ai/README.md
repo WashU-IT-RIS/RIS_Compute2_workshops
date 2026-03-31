@@ -7,8 +7,8 @@ This repository provides scripts, utilities, and sample code for profiling GPU w
 - `src/` — Source code and scripts for profiling and benchmarking.
   - `*.py` — Python scripts for running and profiling ML workloads (e.g., `train.py`, `train_scale.py`).
   - `*.sh` — SLURM batch scripts and shell utilities for submitting jobs to Compute2 
-- `test/` — (Reserved for test scripts or test data.)
-- `LICENSE` — License information for the repository.
+- profile-0.nsys-rep - A sample nsight system profile file 
+
 
 ## Main Features
 
