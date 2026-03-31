@@ -12,7 +12,7 @@ from torch.optim.lr_scheduler import ExponentialLR
 
 # Load the Tiny ImageNet dataset
 train_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/train',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/train',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -20,7 +20,7 @@ train_dataset = torchvision.datasets.ImageFolder(
 )
 
 val_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/val',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/val',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -28,7 +28,7 @@ val_dataset = torchvision.datasets.ImageFolder(
 )
 
 test_dataset = torchvision.datasets.ImageFolder(
-    root='/storage1/fs1/ayush/Active/tinlyml/tiny-imagenet-200/test',
+    root='/storage1/fs1/ayush/Active/tinyml/tiny-imagenet-200/test',
     transform=torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
@@ -77,6 +77,10 @@ def train_func():
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=64, shuffle=False, num_workers=4
     )
+
+    train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=world_size, rank=rank)
+    test_sampler = torch.utils.data.distributed.DistributedSampler(test_dataset, num_replicas=world_size, rank=rank)
+    val_sampler = torch.utils.data.distributed.DistributedSampler(val_dataset, num_replicas=world_size, rank=rank)
 
     # Create a model
     model = torchvision.models.resnet50()
