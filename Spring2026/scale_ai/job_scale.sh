@@ -3,7 +3,7 @@
 #SBATCH --nodes 2
 #SBATCH --cpus-per-task=8        # cpu-cores per task (>1 if multi-threaded tasks)
 #SBATCH --mem-per-cpu=8384                # total memory per node (4 GB per cpu-core is default)
-#SBATCH --ntasks-per-node 1
+#SBATCH --ntasks-per-node 2
 #SBATCH --gpus-per-node 2             #GPU per node
 #SBATCH --partition=general-gpu # slurm partition
 #SBATCH --time=24:30:00          # time limit
@@ -11,7 +11,7 @@
 #SBATCH --reservation workshop2026
 
 
-export MASTER_PORT=$port
+export MASTER_PORT=9999
 echo "master port: $MASTER_PORT"
 master_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 export MASTER_ADDR=$master_addr
