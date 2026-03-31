@@ -98,48 +98,44 @@ train_func():
     for epoch in range(20):
         optimizer.zero_grad(set_to_none=True)
         for i, (images, labels) in enumerate(train_loader):
-            torch.cuda.nvtx.range_push("copy to device")
             images, labels = images.to(device), labels.to(device)
-            torch.cuda.nvtx.range_pop() 
 
-            torch.cuda.nvtx.range_push("forward pass, epoch:" + str(epoch)) 
+
             # Forward pass
             outputs = model(images)
-            torch.cuda.nvtx.range_pop()
 
-            torch.cuda.nvtx.range_push("Loss Cal, epoch:" + str(epoch)) 
+
+
             # Calculate the loss
             loss = criterion(outputs, labels)
-            torch.cuda.nvtx.range_pop()
 
-            torch.cuda.nvtx.range_push("backward pass, epoch:" + str(epoch)) 
+
+
             # Backpropagate the loss
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            torch.cuda.nvtx.range_pop()
+
             # Print the loss
             if i % 10 == 0:
                 print(f'Epoch {epoch + 1}, batch {i + 1}/{len(train_loader)}, loss: {loss.item()}')
             # Evaluate the model on the validation set
         correct = 0
         total = 0
-        torch.cuda.nvtx.range_push("Validation step: " + str(batch_index))
+
         with torch.no_grad():
             
             for images, labels in val_loader:
-                torch.cuda.nvtx.range_push("forward pass, epoch:" + str(epoch)) 
+
                 images, labels = images.to(device), labels.to(device)
                 
                 outputs = model(images)
                 _, predicted = outputs.max(1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-                torch.cuda.nvtx.range_pop()
 
         val_accuracy = correct / total
         print(f'Val accuracy: {val_accuracy}')
-        torch.cuda.nvtx.range_pop()
 
 
     # Test the model on the test set
