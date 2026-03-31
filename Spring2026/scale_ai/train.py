@@ -30,35 +30,9 @@ test_dataset = torchvision.datasets.ImageFolder(
 )
 
 train_func():
-    port = args.port
-    os.environ['MASTER_PORT'] = str(port)
-    torch.manual_seed(torch.initial_seed())
-    world_size =  int(os.environ["WORLD_SIZE"])
-    rank = int(os.environ["SLURM_PROCID"])
-    gpus_per_node  = torch.cuda.device_count()
-    if gpus_per_node >0:
-        local_rank = rank - gpus_per_node * (rank // gpus_per_node)
-    else:
-        local_rank = 0
-    # use the correct device 
 
-    if torch.cuda.is_available():
-        device = torch.device("cuda", local_rank)
-        torch.cuda.set_device(device)
-    else:
-        device = torch.device("cpu", local_rank)
-
-    torch.cuda.manual_seed(1111)
-
-    # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print ("device: ", device)
-    distback = 'nccl'
-    dist.init_process_group(distback, rank=rank, world_size=world_size)
-    print(f"Hello from local_rank: {local_rank} and global rank {dist.get_rank()} of world with size: {dist.get_world_size()} on {gethostname()} where there are {gpus_per_node} allocated GPUs per node.", flush=True)
-    # torch.cuda.set_device(local_rank)
-    if rank == 0: print(f"Group initialized? {dist.is_initialized()}", flush=True)
-
-
     # Create data loaders
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=64, shuffle=True, num_workers=4
@@ -80,8 +54,6 @@ train_func():
     # Define the loss function and optimizer
     if rank == 0: print(f"Initializing distributed model", flush=True)
     # put model , train and test and val on the device
-    model = DDP(model, device_ids=[local_rank])
-
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     scheduler = ExponentialLR(optimizer=optimizer, gamma=0.95)
