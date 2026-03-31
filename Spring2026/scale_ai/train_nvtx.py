@@ -131,7 +131,7 @@ def train_func():
             # Evaluate the model on the validation set
         correct = 0
         total = 0
-        torch.cuda.nvtx.range_push("Validation step: " + str(batch_index))
+        torch.cuda.nvtx.range_push("Validation step:")
         with torch.no_grad():
             
             for images, labels in val_loader:
